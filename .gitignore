@@ -1,0 +1,10 @@
+node_modules/
+playwright-report/
+test-results/
+cypress/screenshots/
+cypress/videos/
+target/
+.idea/
+.vscode/
+.DS_Store
+*.log

@@ -1,0 +1,114 @@
+name: QA portfolio quality gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract-and-playwright:
+    name: Contract, API, UI and accessibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint:openapi
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:playwright
+      - name: Upload Playwright evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  executable-specification:
+    name: Cucumber executable specification
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:bdd
+      - name: Upload Cucumber evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: test-results/cucumber-report.html
+          if-no-files-found: ignore
+          retention-days: 14
+
+  cypress-example:
+    name: Cypress UI and network example
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NO_PROXY: 127.0.0.1,localhost
+      no_proxy: 127.0.0.1,localhost
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:cypress
+      - name: Upload Cypress failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-failure-evidence
+          path: cypress/screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  selenium-page-factory-example:
+    name: Selenium Java Page Factory example
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - run: npm ci
+      - name: Start test application
+        run: |
+          npm start > demo-app.log 2>&1 &
+          npx wait-on http://127.0.0.1:4173/health
+      - name: Run Selenium tests
+        working-directory: tests/selenium-java
+        run: mvn --batch-mode test
+      - name: Upload Selenium report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-surefire-report
+          path: tests/selenium-java/target/surefire-reports/
+          if-no-files-found: ignore
+          retention-days: 14

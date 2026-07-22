@@ -1,0 +1,156 @@
+openapi: 3.1.0
+info:
+  title: Quality Store Orders API
+  version: 1.0.0
+  description: Contract for the self-contained checkout service used in this QA portfolio.
+  contact:
+    name: Oliver Kelly
+    url: https://www.linkedin.com/in/oli-kelly/
+servers:
+  - url: http://127.0.0.1:4173
+tags:
+  - name: Catalogue
+    description: Product discovery operations.
+  - name: Orders
+    description: Guest order operations.
+paths:
+  /api/products:
+    get:
+      operationId: listProducts
+      summary: List products available to guest checkout
+      description: Returns the synthetic catalogue used to configure a guest order.
+      tags: [Catalogue]
+      responses:
+        '200':
+          description: Product list returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [products]
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+  /api/orders:
+    post:
+      operationId: createGuestOrder
+      summary: Create a guest order
+      description: Validates product, quantity, email and optional promotion before calculating GBP pricing.
+      tags: [Orders]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+            examples:
+              discountedOrder:
+                value:
+                  productId: course-bdd
+                  quantity: 2
+                  promoCode: SENIORQA
+                  email: guest@example.test
+      responses:
+        '201':
+          description: Order created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Product, quantity or email is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Promotion is not recognised.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Product:
+      type: object
+      additionalProperties: false
+      required: [id, name, price]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+          minimum: 0
+          multipleOf: 0.01
+    ProductSummary:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    CreateOrderRequest:
+      type: object
+      additionalProperties: false
+      required: [productId, quantity, email]
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 5
+        promoCode:
+          type: string
+        email:
+          type: string
+          format: email
+    Money:
+      type: object
+      additionalProperties: false
+      required: [subtotal, discount, total, currency]
+      properties:
+        subtotal:
+          type: number
+          multipleOf: 0.01
+        discount:
+          type: number
+          multipleOf: 0.01
+        total:
+          type: number
+          multipleOf: 0.01
+        currency:
+          type: string
+          const: GBP
+    Order:
+      type: object
+      additionalProperties: false
+      required: [orderId, email, product, quantity, pricing]
+      properties:
+        orderId:
+          type: string
+          pattern: '^ORD-[0-9]+$'
+        email:
+          type: string
+          format: email
+        product:
+          $ref: '#/components/schemas/ProductSummary'
+        quantity:
+          type: integer
+        pricing:
+          $ref: '#/components/schemas/Money'
+    Error:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string

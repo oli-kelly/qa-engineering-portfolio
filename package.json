@@ -1,0 +1,34 @@
+{
+  "name": "oliver-kelly-qa-engineering-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A traceable QA engineering portfolio covering strategy, BDD, UI, API, accessibility and CI/CD.",
+  "scripts": {
+    "start": "node demo-app/server.js",
+    "test": "npm run test:playwright && npm run test:bdd",
+    "test:playwright": "playwright test",
+    "test:bdd": "start-server-and-test start http://127.0.0.1:4173/health cucumber",
+    "cucumber": "cucumber-js --config cucumber.cjs",
+    "test:cypress": "start-server-and-test start http://127.0.0.1:4173/health cypress:run",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "lint:openapi": "spectral lint contracts/orders.openapi.yaml --ruleset .spectral.yaml",
+    "test:all": "npm run test:playwright && npm run test:bdd && npm run test:cypress"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@cucumber/cucumber": "^13.2.0",
+    "@playwright/test": "^1.61.1",
+    "@stoplight/spectral-cli": "^6.16.2",
+    "cypress": "^15.19.0",
+    "playwright": "^1.61.1",
+    "start-server-and-test": "^3.0.11"
+  }
+}
