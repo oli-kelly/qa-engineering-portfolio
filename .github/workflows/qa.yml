@@ -63,7 +63,6 @@ jobs:
     timeout-minutes: 10
     env:
       NO_PROXY: 127.0.0.1,localhost
-      no_proxy: 127.0.0.1,localhost
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
