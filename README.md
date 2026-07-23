@@ -10,7 +10,7 @@ The examples are deliberately connected. The feature ticket defines the outcome;
 |---|---|---|
 | Senior QA judgement | [Test strategy](docs/test-strategy.md) | Risk model, scope, release criteria and residual risk |
 | Shift-left capability | [Feature ticket](docs/examples/feature-ticket.md) | Questions, assumptions, examples and testable acceptance criteria |
-| BDD and Gherkin | [Guest checkout feature](tests/bdd/features/guest-checkout.feature) | Business-readable scenarios with Cucumber execution |
+| BDD and Gherkin | [Practitioner guide](docs/guides/bdd-gherkin-and-cucumber.md) | Discovery principles, Gherkin design, anti-patterns and runnable Cucumber scenarios |
 | Playwright and Page Objects | [Checkout specification](tests/playwright/checkout.spec.js) | Intent-focused UI checks, fixtures and failure evidence |
 | API testing | [Order API specification](tests/playwright/api/orders.api.spec.js) | Positive, boundary and error-contract coverage |
 | Cypress | [Cypress checkout tests](tests/cypress/e2e/checkout.cy.js) | UI-to-network assertions and controlled failure simulation |
@@ -19,6 +19,19 @@ The examples are deliberately connected. The feature ticket defines the outcome;
 | Defect quality | [Example defect](docs/examples/defect-report.md) | Reproducibility, impact, evidence, environment and investigation notes |
 | Automation judgement | [Automation decision framework](docs/automation-decision-framework.md) | Value/cost model and examples of what should remain manual |
 | CI/CD and release thinking | [Quality gates](docs/ci-cd-quality-gates.md) | Fast feedback, deeper checks, evidence and exception handling |
+
+## QA practitioner guides
+
+The [complete guide library](docs/guides/README.md) explains both technique and judgement: what each practice is for, how I apply it, where it is commonly misused and how it connects to the executable portfolio.
+
+- [BDD, Gherkin and Cucumber](docs/guides/bdd-gherkin-and-cucumber.md) - discovery, example mapping, scenario design, step architecture and when not to use Gherkin.
+- [Feature tickets and acceptance criteria](docs/guides/feature-tickets-and-acceptance-criteria.md) - outcomes, rules, examples, testability and the difference between criteria and test cases.
+- [Risk-based testing](docs/guides/risk-based-testing.md) - impact, likelihood, uncertainty, test design and release decisions.
+- [Choosing what to automate](docs/guides/choosing-what-to-automate.md) - information value, layer selection, flakiness and automation debt.
+- [UI automation architecture](docs/guides/ui-automation-architecture.md) - Page Objects, Page Factory, selectors, waits and test data.
+- [Automation tool selection](docs/guides/automation-tools.md) - contextual comparison of Playwright, Cypress, Selenium and Cucumber.
+- [Writing effective defects](docs/guides/writing-effective-defects.md) - impact, reproducibility, evidence, hypotheses and retest scope.
+- [Quality across delivery](docs/guides/quality-across-delivery.md) - shift-left, CI/CD gates, release readiness and shift-right learning.
 
 ## Quality story
 
@@ -69,6 +82,7 @@ Playwright produces an HTML report with traces, screenshots and video retained o
 |-- demo-app/                      # Self-contained system under test
 |-- docs/
 |   |-- examples/                  # Feature ticket, defect and exploratory charter
+|   |-- guides/                    # Practitioner guides and worked explanations
 |   |-- test-strategy.md           # Risk-based scope and release approach
 |   |-- traceability-matrix.md     # Requirement-to-evidence mapping
 |   |-- automation-decision-framework.md
